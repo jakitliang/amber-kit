@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require "amber"
+
+run_operation = ARGV[0] ? ARGV[0] : "run"
+run_parameter = ARGV[1] ? ARGV[0] : nil
+
+current_path = Dir.pwd
+
+# Add controller path if exist
+controller_path = current_path + '/controller'
+
+if File.exist? controller_path
+  $LOAD_PATH << controller_path
+end
+
+# Add model path if exist
+model_path = current_path + '/model'
+
+if File.exist? model_path
+  $LOAD_PATH << model_path
+end
+
+# Add library path if exist
+library_path = current_path + '/library'
+
+if File.exist? library_path
+  $LOAD_PATH << library_path
+end
+
+# Add view path if exist
+view_path = current_path + '/view'
+
+if File.exist? view_path
+  $LOAD_PATH << view_path
+end
+
+if run_operation
+  case run_operation
+  when /\w+.rb/
+    if File.exist? run_operation
+      if run_operation.slice(0, 1) == '/'
+        require run_operation
+      else
+        require_relative current_path + '/' + run_operation
+      end
+    end
+  when "run"
+    amber_instance = Amber.new
+    amber_instance.run
+  else
+    amber_instance = Amber.new
+    amber_instance.run
+  end
+end
